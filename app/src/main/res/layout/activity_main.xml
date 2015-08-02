@@ -1,9 +1,26 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:orientation="vertical"
     android:background="#000000"
     tools:context=".MainActivity" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save"/>
+        <Button
+            android:id="@+id/exitButton"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/exit"/>
+    </RelativeLayout>
 
     <ListView
         android:id="@+id/packageList"
@@ -11,7 +28,6 @@
         android:layout_height="fill_parent"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:background="#000000"
         android:cacheColorHint="#00000000"
@@ -19,4 +35,4 @@
         android:dividerHeight="1sp"
         android:scrollbars="vertical" />
 
-</RelativeLayout>
+</LinearLayout>

@@ -37,7 +37,7 @@ public class XActivityThread extends XHook {
                             protected void afterHookedMethod(MethodHookParam param) {
                                 String time = Util.getSystemTime();
                                 String callRef = Stack.getCallRef();
-                                String revName = param.args[0].toString();
+                                String revName = param.args[0].getClass().getName();
 
                                 Logger.log("[=== ActivityThread$ReceiverData handleReceiver ===]");
                                 Logger.log("[=== ActivityThread$ReceiverData handleReceiver ===] Receiver Name : " + revName);

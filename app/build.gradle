@@ -4,7 +4,7 @@ android {
     compileSdkVersion 19
     buildToolsVersion '19.1.0'
     defaultConfig {
-        applicationId "com.android.appmoniter"
+        applicationId "com.android.appmonitor"
         minSdkVersion 17
         targetSdkVersion 19
         versionCode 1
@@ -21,6 +21,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:18.0.0'
+    compile 'com.android.support:support-v4:22.2.1'
     provided fileTree(dir: 'libs', include: ['*.jar'])
 }

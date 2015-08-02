@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.android.appmoniter.R;
+import com.android.appmonitor.R;
 
 public class PackageInfoAdapter extends BaseAdapter {
 

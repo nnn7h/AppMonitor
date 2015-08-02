@@ -1,14 +1,15 @@
 package com.android.appmonitor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-import com.android.appmoniter.R;
+import java.util.Set;
 
 import util.AppInfo;
 import util.PackageInfoAdapter;
-import util.Util;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.pm.PackageInfo;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -25,8 +27,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity implements OnItemClickListener {
 
-    private static final int MENU_SAVE = 1;
-    private ListView packageList;
+    private SharedPreferences pkgsPref;
     private List<String> selectedApp;
     private List<AppInfo> appInfoList;
     private boolean[] isSeleted;
@@ -36,9 +37,12 @@ public class MainActivity extends Activity implements OnItemClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        packageList = (ListView) findViewById(R.id.packageList);
+        Button save = (Button) findViewById(R.id.saveButton);
+        Button exit = (Button) findViewById(R.id.exitButton);
+        ListView packageList = (ListView) findViewById(R.id.packageList);
         appInfoList = new ArrayList<AppInfo>();
         selectedApp = new ArrayList<String>();
+        pkgsPref = this.getSharedPreferences("pkgs", Context.MODE_WORLD_READABLE);
 
         getPkgList();
         loadInit();
@@ -48,31 +52,49 @@ public class MainActivity extends Activity implements OnItemClickListener {
         packageList.setOnItemClickListener(this);
         packageList.setAlwaysDrawnWithCacheEnabled(true);
 
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                whichSelect(appInfoList, isSeleted);
+                saveData(selectedApp);
+                Toast.makeText(MainActivity.this.getApplicationContext(), "monitor begin", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+    }
+
+    private void saveData(List<String> selectedApp)
+    {
+        try
+        {
+            SharedPreferences.Editor edit = pkgsPref.edit();
+            edit.clear();
+            edit.putStringSet("pkgs", new HashSet<String>(selectedApp));
+            edit.apply();
+        } catch (Throwable e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 
     //inti array isSelected and checkbox
     public void loadInit() {
         isSeleted = new boolean[appInfoList.size()];
-        String data = Util.readData();
-        if (data == null) {
-            //first boot
-            for (int i = 0; i < isSeleted.length; i++) {
-                isSeleted[i] = false;
-                System.out.println(isSeleted[i]);
-            }
-        } else {
-            //load json
-            List<String> selectedApp = Util.jsonStr2list(data);
-            findSelected(selectedApp);
-        }
-    }
+        Set<String> pkgs = pkgsPref.getStringSet("pkgs", null);
 
-    //to find which app is monitoring
-    public void findSelected(List<String> selectedApp) {
-        for (AppInfo appinfo : appInfoList) {
-            if (selectedApp.contains(appinfo.getPkgName())) {
-                int i = appInfoList.indexOf(appinfo);
-                isSeleted[i] = true;
+        if (pkgs != null){
+            for (AppInfo appinfo : appInfoList) {
+                if (pkgs.contains(appinfo.getPkgName())) {
+                    int i = appInfoList.indexOf(appinfo);
+                    isSeleted[i] = true;
+                }
             }
         }
     }
@@ -107,20 +129,12 @@ public class MainActivity extends Activity implements OnItemClickListener {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, MENU_SAVE, 0, "Save");
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == 1) {
-            whichSelect(appInfoList, isSeleted);
-            String data = Util.list2json(selectedApp);
-            Util.saveData(data);
-            Toast.makeText(this, "moniter begin", Toast.LENGTH_SHORT).show();
-        }
         return super.onOptionsItemSelected(item);
     }
 

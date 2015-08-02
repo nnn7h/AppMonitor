@@ -78,7 +78,6 @@ public class XActivity extends XHook {
                         if (context != null) {
                             HookApp.context = context;
                             String topActivityName = getTopActivity(context);
-//                            String strakTace = Stack.getCallRef();
 
                             Logger.log("[=== ACTIVITY ===] ");
                             Logger.log("[=== ACTIVITY ===] " + topActivityName);

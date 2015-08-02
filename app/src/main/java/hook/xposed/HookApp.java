@@ -1,25 +1,31 @@
 package hook.xposed;
 
 import android.content.Context;
+import java.util.Set;
 
-import java.util.List;
-
+import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
-import util.Util;
 
 public class HookApp implements IXposedHookLoadPackage {
-    private static List<String> appList = null;
+    public Set<String> appList;
     public static Context context;
 
-
+    private Set<String> getHookPkg(){
+        XSharedPreferences pkgsPref = new XSharedPreferences("com.android.appmonitor", "pkgs");
+        return pkgsPref.getStringSet("pkgs", null);
+    }
 
     @Override
     public void handleLoadPackage(LoadPackageParam loadPackageParam) {
-        appList = Util.jsonStr2list(Util.readData());
+        appList = getHookPkg();
         if (appList == null || !appList.contains(loadPackageParam.packageName)) {
+            XposedBridge.log("wo cao ni ma");
             return;
         }
+
+        XposedBridge.log(loadPackageParam.packageName);
 
         hook(XAbstractHttpClient.getInstance(), loadPackageParam);
         hook(XActivity.getInstance(), loadPackageParam);
@@ -51,7 +57,6 @@ public class HookApp implements IXposedHookLoadPackage {
 //        hook(XWindowManageService.getInstance(), loadPackageParam);
         hook(XWifiManager.getInstance(), loadPackageParam);
         hook(XBaseDexClassLoader.getInstance(), loadPackageParam);
-
     }
 
     public void hook(XHook xhook, LoadPackageParam packageParam) {
