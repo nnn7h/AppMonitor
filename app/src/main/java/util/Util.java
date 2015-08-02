@@ -21,7 +21,7 @@ public class Util {
 	public static void writeLog(String pkgName, List<String> logList){
 		if(SDUtils.isSdCardAvailable()){
 			File logFile = SDUtils.createFile("Appmonitor/AppLog", pkgName);
-			FileWriter fw = null;
+			FileWriter fw;
 			try{
 				fw = new FileWriter(logFile, true);
 				for(String log : logList){
@@ -37,11 +37,28 @@ public class Util {
 			}
 		}
 	}
+
+	public static void writeLog(String pkgName, String log){
+		if(SDUtils.isSdCardAvailable()){
+			File logFile = SDUtils.createFile("Appmonitor/AppLog", pkgName);
+			FileWriter fw;
+			try{
+				fw = new FileWriter(logFile, true);
+				fw.write(log+"\n");
+				fw.flush();
+				fw.close();
+			}catch (FileNotFoundException e) {
+				System.out.println("file not found!");
+			} catch (IOException e) {
+				System.out.println("Output error!");
+			}
+		}
+	}
 	
 	public static void writeNetLog(String pkgName, List<String> logList){
 		if(SDUtils.isSdCardAvailable()){
 			File logFile = SDUtils.createFile("Appmonitor/NetLog", pkgName);
-			FileWriter fw = null;
+			FileWriter fw;
 			try{
 				fw = new FileWriter(logFile, true);
 				for(String log : logList){

@@ -1,20 +1,15 @@
 package hook.xposed;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import util.Logger;
-import util.Stack;
 import util.Util;
 
 public class XURL extends XHook {
     private static final String className = "java.net.URL";
-    private static List<String> logList = null;
     private static XURL classLoadHook;
 
     public static XURL getInstance() {
@@ -26,39 +21,26 @@ public class XURL extends XHook {
 
     @Override
     void hook(final XC_LoadPackage.LoadPackageParam packageParam) {
-        logList = new ArrayList<String>();
-
         XposedHelpers.findAndHookMethod(className, packageParam.classLoader,
                 "openConnection", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) {
                         String time = Util.getSystemTime();
-                        URL url = (URL) param.thisObject;
-                        String callRef = Stack.getCallRef();
-
-
-                        boolean flag = Logger.isFeeUrl(url);
-                        if (flag) {
-                            Logger.log("[### URL openConnection ###]");
-                            Logger.log("[### URL openConnection ###] " + url);
-                            Logger.log("[### URL openConnection ###] " + callRef);
-                        } else {
-                            Logger.log("[=== URL openConnection ===]");
-                            Logger.log("[=== URL openConnection ===] " + url);
-                            Logger.log("[=== URL openConnection ===] " + callRef);
+                        URL url = (URL)param.thisObject;
+                        String jsonResult = null;
+                        JSONObject jsonObj = new JSONObject();
+                        try {
+                            jsonObj.put("time", time);
+                            jsonObj.put("action", "openConnection");
+                            JSONObject content = new JSONObject();
+                            content.put("url", url.toString());
+                            jsonObj.put("content", content);
+                        } catch (JSONException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
                         }
-
-                        logList.add("time:" + time);
-                        logList.add("action:--connect url--");
-                        logList.add("function:openConnection");
-                        logList.add("url:" + url);
-                        logList.add(callRef);
-                        for (String log : logList) {
-                            XposedBridge.log(log);
-                        }
-
-                        Util.writeLog(packageParam.packageName, logList);
-                        logList.clear();
+                        jsonResult = jsonObj.toString();
+                        Util.writeLog(packageParam.packageName, jsonResult);
                     }
                 });
     }

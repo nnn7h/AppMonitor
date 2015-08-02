@@ -25,7 +25,8 @@ public class HookApp implements IXposedHookLoadPackage {
         }
 
         hook(XAbstractHttpClient.getInstance(), loadPackageParam);
-        hook(XActivity.getInstance(), loadPackageParam);
+        //尝试监控插屏广告
+//        hook(XActivity.getInstance(), loadPackageParam);
         hook(XActivityManager.getInstance(), loadPackageParam);
         hook(XApplicationPackageManager.getInstance(), loadPackageParam);
         hook(XAudioRecord.getInstance(), loadPackageParam);

@@ -1,5 +1,9 @@
 package hook.xposed;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,21 +39,20 @@ public class XWebView extends XHook {
                     protected void beforeHookedMethod(MethodHookParam param) {
                         String time = Util.getSystemTime();
                         String url = param.args[0].toString();
-                        String callRef = Stack.getCallRef();
-
-                        Logger.log("[--- Webview loadUrl ---] ");
-                        Logger.log("[--- Webview loadUrl ---] " + url);
-                        Logger.log("[--- Webview loadUrl ---] " + callRef);
-
-                        logList.add("time:" + time);
-                        logList.add("Webview -> loadUrl");
-                        logList.add("url : " + url);
-
-                        for (String log : logList) {
-                            XposedBridge.log(log);
+                        String jsonResult;
+                        JSONObject jsonObj = new JSONObject();
+                        try {
+                            jsonObj.put("time", time);
+                            jsonObj.put("action", "loadUrl");
+                            JSONObject content = new JSONObject();
+                            content.put("url", url.toString());
+                            jsonObj.put("content", content);
+                        } catch (JSONException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
                         }
-                        Util.writeLog(packageParam.packageName, logList);
-                        logList.clear();
+                        jsonResult = jsonObj.toString();
+                        Util.writeLog(packageParam.packageName, jsonResult);
                     }
                 });
 
