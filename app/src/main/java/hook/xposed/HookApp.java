@@ -23,6 +23,7 @@ public class HookApp implements IXposedHookLoadPackage {
         if (appList == null || !appList.contains(loadPackageParam.packageName)) {
             return;
         }
+        //add XIoBridge hook libcore.io.IoBridge
 
         hook(XAbstractHttpClient.getInstance(), loadPackageParam);
         //尝试监控插屏广告
