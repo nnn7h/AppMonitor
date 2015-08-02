@@ -3,22 +3,14 @@ package hook.xposed;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import util.Logger;
-import util.Stack;
 import util.Util;
 
 public class XWebView extends XHook {
 
     private static final String className = "android.webkit.WebView";
-    private static List<String> logList = null;
     private static XWebView xWebView;
 
     public static XWebView getInstance() {
@@ -30,9 +22,6 @@ public class XWebView extends XHook {
 
     @Override
     void hook(final XC_LoadPackage.LoadPackageParam packageParam) {
-        logList = new ArrayList<String>();
-
-
         XposedHelpers.findAndHookMethod(className, packageParam.classLoader,
                 "loadUrl", String.class, new XC_MethodHook() {
                     @Override

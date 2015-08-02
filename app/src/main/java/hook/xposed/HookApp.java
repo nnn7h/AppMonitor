@@ -3,7 +3,6 @@ package hook.xposed;
 import android.content.Context;
 import java.util.Set;
 
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
