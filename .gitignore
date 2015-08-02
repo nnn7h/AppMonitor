@@ -11,6 +11,13 @@
 # Generated files
 bin/
 gen/
+.gradle/
+build/
+.idea/workspace.xml
+.idea/libraries
+.idea/misc.xml
+captures
+.DS_Store
 
 # Gradle files
 .gradle/
