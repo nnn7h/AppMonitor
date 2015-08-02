@@ -2,7 +2,6 @@ package hook.xposed;
 
 import util.Logger;
 import util.Stack;
-import util.Util;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
