@@ -26,14 +26,17 @@ public class XURL extends XHook {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) {
                         String time = Util.getSystemTime();
-                        URL url = (URL)param.thisObject;
-                        String jsonResult = null;
+                        String url = param.thisObject.toString();
+                        if (!url.contains("http:")){
+                            return;
+                        }
+                        String jsonResult;
                         JSONObject jsonObj = new JSONObject();
                         try {
                             jsonObj.put("time", time);
                             jsonObj.put("action", "openConnection");
                             JSONObject content = new JSONObject();
-                            content.put("url", url.toString());
+                            content.put("url", url);
                             jsonObj.put("content", content);
                         } catch (JSONException e) {
                             // TODO Auto-generated catch block
