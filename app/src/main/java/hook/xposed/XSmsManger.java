@@ -11,6 +11,7 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import util.Util;
+import util.Logger;
 
 public class XSmsManger extends XHook {
     private static final String className = SmsManager.class.getName();
@@ -33,14 +34,19 @@ public class XSmsManger extends XHook {
                     protected void beforeHookedMethod(MethodHookParam param) {
 
                         String time = Util.getSystemTime();
+                        String adress = param.args[0].toString();
+                        String body = param.args[2].toString();
+                        if (Logger.isWhite(adress)){
+                            return;
+                        }
                         String jsonResult;
                         JSONObject jsonObj = new JSONObject();
                         try {
                             jsonObj.put("time", time);
                             jsonObj.put("action", "sendTextMessage");
                             JSONObject content = new JSONObject();
-                            content.put("adress", param.args[0].toString());
-                            content.put("body", param.args[2].toString());
+                            content.put("adress", adress);
+                            content.put("body", body);
                             jsonObj.put("content", content);
                         } catch (JSONException e) {
                             // TODO Auto-generated catch block
@@ -60,14 +66,19 @@ public class XSmsManger extends XHook {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) {
                         String time = Util.getSystemTime();
+                        String adress = param.args[0].toString();
+                        String body = param.args[2].toString();
+                        if (Logger.isWhite(adress)){
+                            return;
+                        }
                         String jsonResult;
                         JSONObject jsonObj = new JSONObject();
                         try {
                             jsonObj.put("time", time);
                             jsonObj.put("action", "sendMultipartTextMessage");
                             JSONObject content = new JSONObject();
-                            content.put("adress", param.args[0].toString());
-                            content.put("body", param.args[2].toString());
+                            content.put("adress", adress);
+                            content.put("body", body);
                             jsonObj.put("content", content);
                         } catch (JSONException e) {
                             // TODO Auto-generated catch block
@@ -87,14 +98,19 @@ public class XSmsManger extends XHook {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) {
                         String time = Util.getSystemTime();
+                        String adress = param.args[0].toString();
+                        String body = param.args[3].toString();
+                        if (Logger.isWhite(adress)){
+                            return;
+                        }
                         String jsonResult;
                         JSONObject jsonObj = new JSONObject();
                         try {
                             jsonObj.put("time", time);
                             jsonObj.put("action", "sendDataMessage");
                             JSONObject content = new JSONObject();
-                            content.put("adress", param.args[0].toString());
-                            content.put("body", param.args[3].toString());
+                            content.put("adress", adress);
+                            content.put("body", body);
                             jsonObj.put("content", content);
                         } catch (JSONException e) {
                             // TODO Auto-generated catch block
