@@ -3,7 +3,6 @@ package hook.xposed;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.File;
-import java.util.List;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import util.Util;
 import de.robv.android.xposed.XC_MethodHook;
@@ -12,7 +11,6 @@ import de.robv.android.xposed.XposedHelpers;
 public class XRuntime extends XHook {
 
     private static final String className = "java.lang.Runtime";
-    private static List<String> logList = null;
     private static XRuntime classLoadHook;
 
     public static XRuntime getInstance() {
