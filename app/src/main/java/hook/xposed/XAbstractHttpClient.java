@@ -65,7 +65,6 @@ public class XAbstractHttpClient extends XHook {
     }
 
     private String handleResult(BasicHttpResponse respone){
-        String result = "";
         int len = 100;
         int off = 0;
         int count = 0;
@@ -106,6 +105,6 @@ public class XAbstractHttpClient extends XHook {
                 }
             }
         }
-        return result;
+        return jsonObj.toString();
     }
 }
