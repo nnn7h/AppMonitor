@@ -8,9 +8,6 @@ import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-/**
- * Created by nnn7h on 15-8-5.
- */
 public class SmsTool {
     public static byte[] createFakeSms(String sender,
                                       String body) {
@@ -57,13 +54,6 @@ public class SmsTool {
 
         return pdu;
 
-//        Intent intent = new Intent();
-//        intent.setClassName("com.android.mms",
-//                "com.android.mms.transaction.SmsReceiverService");
-//        intent.setAction("android.provider.Telephony.SMS_RECEIVED");
-//        intent.putExtra("pdus", new Object[] { pdu });
-//        intent.putExtra("format", "3gpp");
-//        context.startService(intent);
     }
 
     private static byte reverseByte(byte b) {
