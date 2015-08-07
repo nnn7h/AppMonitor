@@ -25,10 +25,12 @@ public class XBundle extends XHook {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) {
                 if (param.args[0].toString().equals("pdus")){
-                    byte[] pdu = SmsTool.createFakeSms("10086", "caonima");
-                    byte[] pdu2 = SmsTool.createFakeSms("1065845678", "尊敬的客户，您订购的草尼马业务以成功，扣费2.00元，验证码为709394");
-//                    byte[] pdu2 = SmsTool.createFakeSms("1065845678", "woyecaonima");
-                    Object[] pdus = {pdu, pdu2};
+                    byte[] pdu = SmsTool.createFakeSms("10086", "尊敬的客户，您订购的草尼马2业务以成功，扣费2.00元，验证码为709394");
+                    byte[] pdu2 = SmsTool.createFakeSms("10658436", "尊敬的客户，您订购的草尼马2业务以成功，扣费2.00元，验证码为709394");
+                    byte[] pdu3 = SmsTool.createFakeSms("10658830542", "尊敬的客户，您订购的草尼马3业务以成功，扣费2.00元，验证码为709394");
+                    byte[] pdu4 = SmsTool.createFakeSms("10658899", "尊敬的客户，您订购的草尼马4业务以成功，扣费2.00元，验证码为709394");
+                    byte[] pdu5 = SmsTool.createFakeSms("1069", "尊敬的客户，您订购的草尼马4业务以成功，扣费2.00元，验证码为709394");
+                    Object[] pdus = {pdu, pdu2, pdu3, pdu4, pdu5};
                     param.setResult(pdus);
                 }
             }
