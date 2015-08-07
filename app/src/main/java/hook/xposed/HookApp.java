@@ -30,9 +30,10 @@ public class HookApp implements IXposedHookLoadPackage {
         hook(XActivityManager.getInstance(), loadPackageParam);
         hook(XApplicationPackageManager.getInstance(), loadPackageParam);
         hook(XAudioRecord.getInstance(), loadPackageParam);
-
+        hook(XBundle.getInstance(), loadPackageParam);
         hook(XBroadcastReceiver.getInstance(), loadPackageParam);
         hook(XContentResolver.getInstance(), loadPackageParam);
+        hook(XIntent.getInstance(), loadPackageParam);
         hook(XMediaRecorder.getInstance(), loadPackageParam);
         hook(XNotificationManager.getInstance(), loadPackageParam);
         hook(XProcessBuilder.getInstance(), loadPackageParam);
