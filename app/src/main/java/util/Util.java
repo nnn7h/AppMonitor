@@ -38,6 +38,8 @@ public class Util {
 
 	public static void writeLog(String pkgName, List<String> logList){
 		if(SDUtils.isSdCardAvailable()){
+            SDUtils.createDir("Appmonitor");
+            SDUtils.createDir("Appmonitor/AppLog");
 			File logFile = SDUtils.createFile("Appmonitor/AppLog", pkgName);
 			FileWriter fw;
 			try{
@@ -58,6 +60,8 @@ public class Util {
 
 	public static void writeLog(String pkgName, String log){
 		if(SDUtils.isSdCardAvailable()){
+            SDUtils.createDir("Appmonitor");
+            SDUtils.createDir("Appmonitor/AppLog");
 			File logFile = SDUtils.createFile("Appmonitor/AppLog", pkgName);
 			FileWriter fw;
 			try{
