@@ -7,6 +7,7 @@ import java.util.Set;
 
 import util.AppInfo;
 import util.PackageInfoAdapter;
+import util.SDUtils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -46,6 +47,9 @@ public class MainActivity extends Activity implements OnItemClickListener {
 
         getPkgList();
         loadInit();
+
+        SDUtils.createDir("Appmonitor");
+        SDUtils.createDir("Appmonitor/AppLog");
 
         PackageInfoAdapter packgaeAdapter = new PackageInfoAdapter(this, appInfoList, isSeleted);
         packageList.setAdapter(packgaeAdapter);
