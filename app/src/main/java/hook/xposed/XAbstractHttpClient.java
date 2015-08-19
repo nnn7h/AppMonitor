@@ -182,7 +182,7 @@ public class XAbstractHttpClient extends XHook {
                 }
                 result = sb.toString();
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
             logsb.append("result:\n" + result + '\n');
 
