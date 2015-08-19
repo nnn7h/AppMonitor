@@ -41,7 +41,6 @@ public class HookApp implements IXposedHookLoadPackage {
         hook(XContext.getInstance(), loadPackageParam);
         hook(XContextImpl.getInstance(), loadPackageParam);
         hook(XContentResolver.getInstance(), loadPackageParam);
-//        hook(XDexClassLoader.getInstance(), loadPackageParam);
         hook(XDialog.getInstance(), loadPackageParam);
         hook(XMediaRecorder.getInstance(), loadPackageParam);
         hook(XNotificationManager.getInstance(), loadPackageParam);
@@ -49,14 +48,14 @@ public class HookApp implements IXposedHookLoadPackage {
         hook(XRuntime.getInstance(), loadPackageParam);
         hook(XSmsManger.getInstance(), loadPackageParam);
         hook(XSmsMessage.getInstance(), loadPackageParam);
-        hook(XString.getInstance(), loadPackageParam);
+//        hook(XString.getInstance(), loadPackageParam);
         hook(XTelephoneyManager.getInstance(), loadPackageParam);
         hook(XURL.getInstance(), loadPackageParam);
         hook(XWebView.getInstance(), loadPackageParam);
         hook(XViewGroup.getInstance(), loadPackageParam);
 //        hook(XWindowManageService.getInstance(), loadPackageParam);
         hook(XWifiManager.getInstance(), loadPackageParam);
-        hook(XBaseDexClassLoader.getInstance(), loadPackageParam);
+//        hook(XBaseDexClassLoader.getInstance(), loadPackageParam);
     }
 
     public void hook(XHook xhook, LoadPackageParam packageParam) {

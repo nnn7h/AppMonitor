@@ -61,35 +61,45 @@ public class XContentResolver extends XHook {
                             selection = (String) param.args[2];
                         }
                         String callRef = Stack.getCallRef();
+                        String time = Util.getSystemTime();
+                        StringBuffer logsb = new StringBuffer();
 
                         if (isUriAvailable(uri)) {
-                            String time = Util.getSystemTime();
 
                             Logger.log("[### ContentResolver query ###]");
                             Logger.log("[### ContentResolver query ###] " + uri);
-                            if (selection != null){
+
+                            logsb.append("time: " + time + '\n')
+                                    .append("function: query\n")
+                                    .append("Uri: " + uri + '\n');
+
+                            if (!selection.equals("")){
                                 Logger.log("[### ContentResolver query ###] " + selection);
+                                logsb.append("selection:" + selection + '\n');
                             }
+
                             Logger.log("[### ContentResolver query ###] " + callRef);
+                            logsb.append("callRef: " + callRef + '\n');
 
-                            logList.add("time:" + time);
-                            logList.add("action:--query database--");
-                            logList.add("function:query");
-                            logList.add("Uri:" + uri.toString());
-                            logList.add("selection:" + param.args[2]);
+                            Util.writeLog(packageParam.packageName, logsb.toString());
 
-                            for (String log : logList) {
-                                XposedBridge.log(log);
-                            }
-                            Util.writeLog(packageParam.packageName, logList);
-                            logList.clear();
                         } else {
                             Logger.log("[=== ContentResolver query ===]");
                             Logger.log("[=== ContentResolver query ===] " + uri);
-                            if (selection != null){
+
+                            logsb.append("time: " + time + '\n')
+                                    .append("function: query\n")
+                                    .append("Uri: " + uri + '\n');
+
+                            if (!selection.equals("")){
                                 Logger.log("[=== ContentResolver query ===] " + selection);
+                                logsb.append("selection:" + selection + '\n');
                             }
+
                             Logger.log("[=== ContentResolver query ===] " + callRef);
+                            logsb.append("callRef: " + callRef + '\n');
+
+                            Util.writeLog(packageParam.packageName, logsb.toString());
                         }
 
 
@@ -103,31 +113,38 @@ public class XContentResolver extends XHook {
                         String uri = (String) param.args[0];
                         String value = (String) param.args[1];
                         String callRef = Stack.getCallRef();
+                        String time = Util.getSystemTime();
+
+                        StringBuffer logsb = new StringBuffer();
 
                         if (isUriAvailable(uri)) {
-                            String time = Util.getSystemTime();
-
                             Logger.log("[### ContentResolver query ###]");
                             Logger.log("[### ContentResolver query ###] " + uri);
                             Logger.log("[### ContentResolver query ###] " + value);
                             Logger.log("[### ContentResolver query ###] " + callRef);
 
-                            logList.add("time:" + time);
-                            logList.add("action:--add data to database--");
-                            logList.add("function:insert");
-                            logList.add("Uri:" + uri);
-                            logList.add("value:" + value);
-                            for (String log : logList) {
-                                XposedBridge.log(log);
-                            }
-                            Util.writeLog(packageParam.packageName, logList);
+                            logsb.append("time: " + time + '\n')
+                                    .append("function: insert\n")
+                                    .append("Uri:" + uri + '\n')
+                                    .append("value:" + value + '\n')
+                                    .append("callRef: " + callRef + '\n');
+
+                            Util.writeLog(packageParam.packageName, logsb.toString());
+
                         } else {
                             Logger.log("[=== ContentResolver query ===]");
                             Logger.log("[=== ContentResolver query ===] " + uri);
                             Logger.log("[=== ContentResolver query ===] " + value);
                             Logger.log("[=== ContentResolver query ===] " + callRef);
+
+                            logsb.append("time: " + time + '\n')
+                                    .append("function: insert\n")
+                                    .append("Uri:" + uri + '\n')
+                                    .append("value:" + value + '\n')
+                                    .append("callRef: " + callRef + '\n');
+
+                            Util.writeLog(packageParam.packageName, logsb.toString());
                         }
-                        logList.clear();
                     }
                 });
 
@@ -139,33 +156,39 @@ public class XContentResolver extends XHook {
                         String where = (String) param.args[1];
                         String selection = (String) param.args[2];
                         String callRef = Stack.getCallRef();
+                        String time = Util.getSystemTime();
+                        StringBuffer logsb = new StringBuffer();
 
                         if (isUriAvailable(uri)) {
-                            String time = Util.getSystemTime();
-
                             Logger.log("[### ContentResolver query ###]");
                             Logger.log("[### ContentResolver query ###] " + uri);
                             Logger.log("[### ContentResolver query ###] " + where);
                             Logger.log("[### ContentResolver query ###] " + selection);
                             Logger.log("[### ContentResolver query ###] " + callRef);
 
-                            logList.add("time:" + time);
-                            logList.add("action:--delete data from database--");
-                            logList.add("function:delete");
-                            logList.add("Uri:" + uri.toString());
-                            logList.add("where:" + param.args[1].toString());
-                            logList.add("selectionArgs:" + param.args[2].toString());
-                            for (String log : logList) {
-                                XposedBridge.log(log);
-                            }
-                            Util.writeLog(packageParam.packageName, logList);
-                            logList.clear();
+                            logsb.append("time: " + time + '\n')
+                                    .append("function: delete\n")
+                                    .append("Uri: " + uri + '\n')
+                                    .append("where: " + where + '\n')
+                                    .append("selectionArgs: " + selection + '\n')
+                                    .append("callRef: " + callRef + '\n');
+
+                            Util.writeLog(packageParam.packageName, logsb.toString());
                         } else {
                             Logger.log("[=== ContentResolver query ===]");
                             Logger.log("[=== ContentResolver query ===] " + uri);
                             Logger.log("[=== ContentResolver query ===] " + where);
                             Logger.log("[=== ContentResolver query ===] " + selection);
                             Logger.log("[=== ContentResolver query ===] " + callRef);
+
+                            logsb.append("time: " + time + '\n')
+                                    .append("function: delete\n")
+                                    .append("Uri: " + uri + '\n')
+                                    .append("where: " + where + '\n')
+                                    .append("selectionArgs: " + selection + '\n')
+                                    .append("callRef: " + callRef + '\n');
+
+                            Util.writeLog(packageParam.packageName, logsb.toString());
                         }
 
                     }

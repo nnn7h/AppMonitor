@@ -11,13 +11,12 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import util.Logger;
@@ -26,7 +25,6 @@ import util.Util;
 
 public class XAbstractHttpClient extends XHook {
     private static final String className = "org.apache.http.impl.client.AbstractHttpClient";
-    private static List<String> logList = null;
     private static XAbstractHttpClient xAbstractHttpClient;
 
     public static XAbstractHttpClient getInstance() {
@@ -48,38 +46,41 @@ public class XAbstractHttpClient extends XHook {
                         HttpHost host = (HttpHost) param.args[0];
                         HttpRequestBase request = (HttpRequestBase) param.args[1];
                         BasicHttpResponse respone = (BasicHttpResponse) param.getResult();
+                        String callRef = Stack.getCallRef();
+
+                        StringBuffer logsb = new StringBuffer();
+                        logsb.append("time:" + Util.getSystemTime() + '\n');
+                        logsb.append("function: execute\n");
 
                         if (request instanceof HttpGet) {
                             HttpGet httpGet = (HttpGet) request;
-                            logList = handleHttpGet(host, httpGet);
-                            Util.writeNetLog(packageParam.packageName, logList);
+                            String log = handleHttpGet(host, httpGet);
+                            logsb.append(log + '\n');
                         } else if (request instanceof HttpPost) {
                             HttpPost httpPost = (HttpPost) request;
-                            logList = handleHttpPost(host, httpPost);
-                            Util.writeNetLog(packageParam.packageName, logList);
-                        } else {
-                            logList = handleResult(respone);
-                            Logger.log("[=== AbstractHttpClient execute ===] host : " + host);
-                            Util.writeNetLog(packageParam.packageName, logList);
+                            String log = handleHttpPost(host, httpPost);
+                            logsb.append(log + '\n');
                         }
 
+                        logsb.append(handleResult(respone) + '\n');
+                        logsb.append("callRef:" + callRef + '\n');
+                        Util.writeLog(packageParam.packageName, logsb.toString());
+
+                        Logger.log("[=== AbstractHttpClient execute ===] host : " + host);
                         Logger.logCallRef("[=== AbstractHttpClient execute ===] ");
-                        logList = writeAppLog(host);
-                        Util.writeLog(packageParam.packageName, logList);
                     }
                 });
     }
 
 
-    public List<String> handleHttpGet(HttpHost httpHost, HttpGet httpGet) {
-        List<String> logList = new ArrayList<String>();
+    public String handleHttpGet(HttpHost httpHost, HttpGet httpGet) {
         String host = httpHost.toURI().toString();
         String url = httpGet.getURI().toString();
+        StringBuffer logsb = new StringBuffer();
+        logsb.append("HTTP METHOD:" + httpGet.getMethod() + '\n')
+                .append("HOST:" + host + '\n')
+                .append("URL:" + url + '\n');
 
-        logList.add("time:" + Util.getSystemTime());
-        logList.add("HTTP METHOD:" + httpGet.getMethod());
-        logList.add("HOST:" + host);
-        logList.add("URL:" + url);
 
         Logger.log("[=== HttpGet ===] host : " + host);
         Logger.log("[=== HttpGet ===] url  : " + url);
@@ -87,23 +88,22 @@ public class XAbstractHttpClient extends XHook {
         Header[] header = httpGet.getAllHeaders();
         if (header != null) {
             for (int i = 0; i < header.length; i++) {
-                logList.add(header[i].getName() + ":" + header[i].getValue());
+                logsb.append(header[i].getName() + ":" + header[i].getValue() + '\n');
                 Logger.log("[=== HttpGet ===] (Header) " + header[i].getName() + " : " + header[i].getValue());
             }
         }
-
-        return logList;
+        return logsb.toString();
     }
 
-    public List<String> handleHttpPost(HttpHost httpHost, HttpPost httpPost) {
-        List<String> logList = new ArrayList<String>();
+    public String handleHttpPost(HttpHost httpHost, HttpPost httpPost) {
         String host = httpHost.toURI().toString();
         String url = httpPost.getURI().toString();
 
-        logList.add("time:" + Util.getSystemTime());
-        logList.add("HTTP METHOD:" + httpPost.getMethod());
-        logList.add("HOST:" + host);
-        logList.add("URL:" + url);
+        StringBuffer logsb = new StringBuffer();
+
+        logsb.append("HTTP METHOD:" + httpPost.getMethod() + '\n')
+                .append("HOST:" + host + '\n')
+                .append("URL:" + url + '\n');
 
         Logger.log("[=== HttpPost ===] host : " + host);
         Logger.log("[=== HttpPost ===] url  : " + url);
@@ -111,7 +111,7 @@ public class XAbstractHttpClient extends XHook {
         Header[] header = httpPost.getAllHeaders();
         if (header != null) {
             for (int i = 0; i < header.length; i++) {
-                logList.add(header[i].getName() + ":" + header[i].getValue());
+                logsb.append(header[i].getName() + ":" + header[i].getValue() + '\n');
                 Logger.log("[=== HttpPost ===] (Header) " + header[i].getName() + " : " + header[i].getValue());
             }
         }
@@ -125,8 +125,8 @@ public class XAbstractHttpClient extends XHook {
                     byte[] data = new byte[(int) entity.getContentLength()];
                     entity.getContent().read(data);
                     String content = new String(data, HTTP.DEFAULT_CONTENT_CHARSET);
-                    logList.add("HTTP POST CONTENT:" + content);
 
+                    logsb.append("HTTP POST CONTENT:" + content + '\n');
                     Logger.log("[=== HttpPost ===] Content  : " + content);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -136,8 +136,8 @@ public class XAbstractHttpClient extends XHook {
                     byte[] data = new byte[(int) entity.getContentLength()];
                     entity.getContent().read(data);
                     String content = new String(data, contentType.substring(contentType.lastIndexOf("=") + 1));
-                    logList.add("HTTP POST CONTENT:" + content);
 
+                    logsb.append("HTTP POST CONTENT:" + content + '\n');
                     Logger.log("[=== HttpPost ===] Content : " + content);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -148,57 +148,48 @@ public class XAbstractHttpClient extends XHook {
                 byte[] data = new byte[(int) entity.getContentLength()];
                 entity.getContent().read(data);
                 String content = new String(data, HTTP.DEFAULT_CONTENT_CHARSET);
-                logList.add("HTTP POST CONTENT:" + content);
 
+                logsb.append("HTTP POST CONTENT:" + content + '\n');
                 Logger.log("[=== HttpPost ===] Content : " + content);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        return logList;
+        return logsb.toString();
     }
 
-    public List<String> handleResult(BasicHttpResponse respone) {
-        List<String> logList = new ArrayList<String>();
+    public String handleResult(BasicHttpResponse respone) {
+        StringBuffer logsb = new StringBuffer();
         if (respone != null) {
-            logList.add("result code:" + respone.getStatusLine().getStatusCode());
+            logsb.append("result code:" + respone.getStatusLine().getStatusCode() + '\n');
             Header[] header = respone.getAllHeaders();
             if (header != null) {
                 for (int i = 0; i < header.length; i++) {
-                    logList.add(header[i].getName() + ":" + header[i].getValue());
+                    logsb.append(header[i].getName() + ":" + header[i].getValue() + '\n');
                     Logger.log("[=== AbstractHttpClient execute ===] (Header) " + header[i].getName() + " : " + header[i].getValue());
                 }
             }
-            String result = null;
+            String result = "";
             try {
-                result = EntityUtils.toString(respone.getEntity());
+                InputStream is = respone.getEntity().getContent();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuffer sb = new StringBuffer();
+                String line = reader.readLine();
+                while (line != null){
+                    sb.append(line + '\n');
+                }
+                result = sb.toString();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            result.replace("\r", "");
-            logList.add("result:" + result);
+            logsb.append("result:\n" + result + '\n');
 
             Logger.log("[=== AbstractHttpClient execute ===] result : " + result);
         } else {
-            logList.add("result:null");
+            logsb.append("result:null\n");
         }
-        logList.add("****************************************");
-        return logList;
+        return logsb.toString();
     }
-
-    public List<String> writeAppLog(HttpHost host) {
-        List<String> logList = new ArrayList<String>();
-        String time = Util.getSystemTime();
-        logList.add("time:" + time);
-        logList.add("action:--executed--");
-        logList.add("function:execute");
-        logList.add("url:" + host.toURI().toString());
-        for (String log : logList) {
-            XposedBridge.log(log);
-        }
-
-        return logList;
-    }
-
 }

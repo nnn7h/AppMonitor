@@ -38,32 +38,20 @@ public class XApplicationPackageManager extends XHook {
                 int.class, new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) {
-                        String time = Util.getSystemTime();
-                        logList.add("time:" + time);
-                        logList.add("action:--set icon disable or enable--");
-                        logList.add("function:setComponentEnabledSetting");
-                        // ComponentName cn = (ComponentName) param.args[0];
-                        // String cnName = cn.getPackageName() + "/" +
-                        // cn.getClassName();
-                        logList.add("componetName:" + param.args[0]);
-
+                        StringBuffer logsb = new StringBuffer();
                         int state = (Integer) param.args[1];
                         if (state == PackageManager.COMPONENT_ENABLED_STATE_DISABLED) {
-                            logList.add("action:--COMPONENT_ENABLED_STATE_DISABLED--");
-
+                            String time = Util.getSystemTime();
                             String callRef = Stack.getCallRef();
+                            logsb.append("time:" + time)
+                                    .append("function:setComponentEnabledSetting\n")
+                                    .append("action:hide Icon\n")
+                                    .append("CallRef:" + callRef + '\n');
+
                             Logger.log("[*** Hide Icon ***]");
                             Logger.log("[*** Hide Icon ***] " + callRef);
-                        } else if (state == PackageManager.COMPONENT_ENABLED_STATE_ENABLED)
-                            logList.add("action:--COMPONENT_ENABLED_STATE_ENABLED--");
-                        else if (state == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT)
-                            logList.add("action:--COMPONENT_ENABLED_STATE_DEFAULT--");
-
-                        for (String log : logList) {
-                            XposedBridge.log(log);
                         }
-                        Util.writeLog(packageParam.packageName, logList);
-                        logList.clear();
+                        Util.writeLog(packageParam.packageName, logsb.toString());
                     }
                 });
 

@@ -24,7 +24,7 @@ public class XTelephoneyManager extends XHook {
 
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param){
-                        param.setResult("356357045618430");
+//                        param.setResult("356357045618430");
                     }
 
                     @Override
@@ -39,7 +39,7 @@ public class XTelephoneyManager extends XHook {
 
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) {
-                        param.setResult("13826290651");
+//                        param.setResult("13826290651");
                     }
 
                     @Override
@@ -55,7 +55,7 @@ public class XTelephoneyManager extends XHook {
 
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param){
-                        param.setResult("460006203280876");
+//                        param.setResult("460006203280876");
                     }
 
                     @Override

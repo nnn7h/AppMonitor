@@ -30,21 +30,16 @@ public class XBroadcastReceiver extends XHook {
 				"abortBroadcast", new XC_MethodHook() {
 					@Override
 					protected void afterHookedMethod(MethodHookParam param) {
+						String time = Util.getSystemTime();
 						String callRef = Stack.getCallRef();
 						Logger.log("[*** abort Broadcast ***]");
 						Logger.log("[*** abort Broadcast ***] " + callRef);
 
-						String time = Util.getSystemTime();
-						logList.add("time:" + time);
-						logList.add("action:--sms abort--");
-						logList.add("function:abortBroadcast");
-
-						for(String log : logList){
-							XposedBridge.log(log);
-						}
-
-						Util.writeLog(packageParam.packageName,logList);
-						logList.clear();
+						StringBuffer logsb = new StringBuffer();
+						logsb.append("time: " + time + '\n')
+								.append("function: abortBroadcast\n")
+								.append("callRef: " + callRef + '\n');
+						Util.writeLog(packageParam.packageName,logsb.toString());
 					}
 				});
 	}

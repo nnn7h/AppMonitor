@@ -18,16 +18,13 @@ public class Util {
 		return dateTime;
 	}
 
-	public static void writeLog(String pkgName, List<String> logList){
+	public static void writeLog(String pkgName, String log){
 		if(SDUtils.isSdCardAvailable()){
 			File logFile = SDUtils.createFile("Appmonitor/AppLog", pkgName);
 			FileWriter fw = null;
 			try{
 				fw = new FileWriter(logFile, true);
-				for(String log : logList){
-					fw.write(log+"\n");
-				}
-				fw.write("\n");
+				fw.write(log + '\n');
 				fw.flush();
 				fw.close();
 			}catch (FileNotFoundException e) {

@@ -1,17 +1,13 @@
 package hook.xposed;
 
 import android.app.AlertDialog;
-import android.app.AndroidAppHelper;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.telephony.SmsManager;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import util.Logger;
@@ -20,20 +16,17 @@ import util.Util;
 
 public class XSmsManger extends XHook {
     private static final String className = SmsManager.class.getName();
-    private static List<String> logList = null;
     private static XSmsManger xSmsManger;
 
     public static XSmsManger getInstance() {
         if (xSmsManger == null) {
             xSmsManger = new XSmsManger();
-
         }
         return xSmsManger;
     }
 
     @Override
     void hook(final XC_LoadPackage.LoadPackageParam packageParam) {
-        logList = new ArrayList<String>();
         XposedHelpers.findAndHookMethod(className, packageParam.classLoader,
                 "sendTextMessage", String.class, String.class, String.class,
                 PendingIntent.class, PendingIntent.class, new XC_MethodHook() {
@@ -43,34 +36,31 @@ public class XSmsManger extends XHook {
                         String time = Util.getSystemTime();
                         String number = param.args[0].toString();
                         String body = param.args[2].toString();
+                        boolean isWhite = Logger.isWhite(number);
                         String callRef = Stack.getCallRef();
 
-                        param.args[0] = "10086";
-                        param.args[2] = "101";
+//                        param.args[0] = "10086";
+//                        param.args[2] = "101";
 
                         Logger.log("[*** Send SMS ***]");
-                        Logger.log("[*** Send SMS ***] Addr : " + number );
+                        Logger.log("[*** Send SMS ***] Addr : " + number);
                         Logger.log("[*** Send SMS ***] Body : " + body);
-                        Logger.log("[*** Send SMS ***] isWhite : " + Logger.isWhite(number) );
+                        Logger.log("[*** Send SMS ***] isWhite : " + isWhite);
                         Logger.log("[*** Send SMS ***] " + callRef);
 
-                        if (HookApp.context != null) {
-                            showBox(HookApp.context, packageParam.appInfo.name, number, body, packageParam.appInfo.icon);
-                        }
+//                        if (HookApp.context != null) {
+//                            showBox(HookApp.context, packageParam.appInfo.name, number, body, packageParam.appInfo.icon);
+//                        }
 
-                        logList.add("time:" + time);
-                        logList.add("action:--sms sent--");
-                        logList.add("function:sendTextMessage");
-                        logList.add("target:" + number);
-                        logList.add("text:" + body);
+                        StringBuffer logsb = new StringBuffer();
+                        logsb.append("time: " + time + '\n')
+                                .append("function: sendTextMessage\n")
+                                .append("Addr:" + number + '\n')
+                                .append("body:" + body + '\n')
+                                .append("isWhite: " + isWhite + '\n')
+                                .append("callRef: " + callRef + '\n');
 
-
-                        for (String log : logList) {
-                            XposedBridge.log(log);
-                        }
-
-                        Util.writeLog(packageParam.packageName, logList);
-                        logList.clear();
+                        Util.writeLog(packageParam.packageName, logsb.toString());
                     }
 
                 });
@@ -85,36 +75,35 @@ public class XSmsManger extends XHook {
                         String time = Util.getSystemTime();
                         String number = param.args[0].toString();
                         ArrayList<String> body = (ArrayList) param.args[2];
+                        boolean isWhite = Logger.isWhite(number);
+                        String callRef = Stack.getCallRef();
                         String msg = "";
                         for (String str : body) {
                             msg += str;
                         }
 
-                        String callRef = Stack.getCallRef();
-
-                        param.args[0] = "10086";
-                        param.args[2] = "101";
+//                        param.args[0] = "10086";
+//                        param.args[2] = "101";
 
                         Logger.log("[*** Send SMS ***]");
-                        Logger.log("[*** Send SMS ***] Addr : " + number );
+                        Logger.log("[*** Send SMS ***] Addr : " + number);
                         Logger.log("[*** Send SMS ***] Body : " + msg);
-                        Logger.log("[*** Send SMS ***] isWhite : " + Logger.isWhite(number) );
+                        Logger.log("[*** Send SMS ***] isWhite : " + isWhite);
                         Logger.log("[*** Send SMS ***] " + callRef);
 
-                        if (HookApp.context != null) {
-                            showBox(HookApp.context, packageParam.appInfo.name, number, msg, packageParam.appInfo.icon);
-                        }
+//                        if (HookApp.context != null) {
+//                            showBox(HookApp.context, packageParam.appInfo.name, number, msg, packageParam.appInfo.icon);
+//                        }
 
-                        logList.add("time:" + time);
-                        logList.add("action:--sms sent--");
-                        logList.add("function:sendMultipartTextMessage");
-                        logList.add("target:" + number);
-                        logList.add("text:" + body);
-                        for (String log : logList) {
-                            XposedBridge.log(log);
-                        }
-                        Util.writeLog(packageParam.packageName, logList);
-                        logList.clear();
+                        StringBuffer logsb = new StringBuffer();
+                        logsb.append("time: " + time + '\n')
+                                .append("function: sendMultipartTextMessage\n")
+                                .append("Addr:" + number + '\n')
+                                .append("body:" + msg + '\n')
+                                .append("isWhite: " + isWhite + '\n')
+                                .append("callRef: " + callRef + '\n');
+
+                        Util.writeLog(packageParam.packageName, logsb.toString());
                     }
 
                 });
@@ -128,32 +117,33 @@ public class XSmsManger extends XHook {
                     protected void beforeHookedMethod(MethodHookParam param) {
                         String time = Util.getSystemTime();
                         String number = param.args[0].toString();
-                        byte[] body = (byte[])param.args[3];
+                        byte[] body = (byte[]) param.args[3];
+                        String msg = new String(body);
+                        boolean isWhite = Logger.isWhite(number);
                         String callRef = Stack.getCallRef();
 
-                        param.args[0] = "10086";
-                        param.args[3] = "101".getBytes();
+//                        param.args[0] = "10086";
+//                        param.args[3] = "101".getBytes();
 
                         Logger.log("[*** Send SMS ***]");
-                        Logger.log("[*** Send SMS ***] Addr : " + number );
-                        Logger.log("[*** Send SMS ***] Body : " + new String(body));
-                        Logger.log("[*** Send SMS ***] isWhite : " + Logger.isWhite(number) );
+                        Logger.log("[*** Send SMS ***] Addr : " + number);
+                        Logger.log("[*** Send SMS ***] Body : " + msg);
+                        Logger.log("[*** Send SMS ***] isWhite : " + isWhite);
                         Logger.log("[*** Send SMS ***] " + callRef);
 
-                        if (HookApp.context != null) {
-                            showBox(HookApp.context, packageParam.appInfo.name, number, new String(body), packageParam.appInfo.icon);
-                        }
+//                        if (HookApp.context != null) {
+//                            showBox(HookApp.context, packageParam.appInfo.name, number, new String(body), packageParam.appInfo.icon);
+//                        }
 
-                        logList.add("time:" + time);
-                        logList.add("action:--sms sent--");
-                        logList.add("function:sendDataMessage");
-                        logList.add("target:" + number);
-                        logList.add("text:" + body);
-                        for (String log : logList) {
-                            XposedBridge.log(log);
-                        }
-                        Util.writeLog(packageParam.packageName, logList);
-                        logList.clear();
+                        StringBuffer logsb = new StringBuffer();
+                        logsb.append("time: " + time + '\n')
+                                .append("function: sendMultipartTextMessage\n")
+                                .append("Addr:" + number + '\n')
+                                .append("body:" + msg + '\n')
+                                .append("isWhite: " + isWhite + '\n')
+                                .append("callRef: " + callRef + '\n');
+
+                        Util.writeLog(packageParam.packageName, logsb.toString());
                     }
 
                 });

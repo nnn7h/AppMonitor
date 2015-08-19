@@ -42,17 +42,13 @@ public class XContextImpl extends XHook {
                         Logger.log("[=== Register Receiver ===] " + receiverName);
                         Logger.log("[=== Register Receiver ===] " + callRef);
 
-                        logList.add("time:" + time);
-                        logList.add("action:--register broadcastReceiver--");
-                        logList.add("function:registerReceiver");
-                        logList.add("Receiver Name:" + receiverName);
-                        logList.add("Call Ref : " + callRef);
-                        for (String log : logList) {
-                            XposedBridge.log(log);
-                        }
+                        StringBuffer logsb = new StringBuffer();
+                        logsb.append("time: " + time + '\n')
+                                .append("function:registerReceiver\n")
+                                .append("Receiver Name:" + receiverName + '\n')
+                                .append("Call Ref : " + callRef + '\n');
 
-                        Util.writeLog(packageParam.packageName, logList);
-                        logList.clear();
+                        Util.writeLog(packageParam.packageName, logsb.toString());
                     }
                 });
     }

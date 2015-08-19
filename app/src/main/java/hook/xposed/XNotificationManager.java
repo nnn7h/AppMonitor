@@ -3,11 +3,7 @@ package hook.xposed;
 import android.app.Notification;
 import android.app.NotificationManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import util.Logger;
@@ -17,7 +13,6 @@ import util.Util;
 public class XNotificationManager extends XHook {
 
     private static final String className = NotificationManager.class.getName();
-    private static List<String> logList = null;
     private static XNotificationManager classLoadHook;
 
     public static XNotificationManager getInstance() {
@@ -29,7 +24,6 @@ public class XNotificationManager extends XHook {
 
     @Override
     void hook(final XC_LoadPackage.LoadPackageParam packageParam) {
-        logList = new ArrayList<String>();
         XposedHelpers.findAndHookMethod(className, packageParam.classLoader, "notify",
                 int.class, Notification.class, new XC_MethodHook() {
                     @Override
@@ -42,17 +36,13 @@ public class XNotificationManager extends XHook {
                         Logger.log("[### AD ###] " + notificationName);
                         Logger.log("[### AD ###] " + callRef);
 
-                        logList.add("time:" + time);
-                        logList.add("action:--Send Notification--");
-                        logList.add("function:notify");
-                        logList.add("Notification:" + notificationName);
-                        logList.add(callRef);
+                        StringBuffer logsb = new StringBuffer();
+                        logsb.append("time:" + time + '\n')
+                                .append("function: notify AD\n")
+                                .append("Notification:" + notificationName + '\n')
+                                .append("callRef: " + callRef + '\n');
 
-                        for (String log : logList) {
-                            XposedBridge.log(log);
-                        }
-                        Util.writeLog(packageParam.packageName, logList);
-                        logList.clear();
+                        Util.writeLog(packageParam.packageName, logsb.toString());
                     }
                 });
     }

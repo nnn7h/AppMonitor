@@ -8,6 +8,7 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import util.Logger;
 import util.Stack;
+import util.Util;
 
 public class XContext extends XHook {
 
@@ -27,6 +28,7 @@ public class XContext extends XHook {
                 Intent.class, String.class, new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) {
+                        String time = Util.getSystemTime();
                         Intent intent = (Intent) param.args[0];
                         String receiverPermission = (String) param.args[1];
                         String callRef = Stack.getCallRef();
@@ -34,6 +36,16 @@ public class XContext extends XHook {
                         Logger.log("[=== sendBroadcast ===] " + intent.getAction());
                         Logger.log("[=== sendBroadcast ===] " + receiverPermission);
                         Logger.log("[=== sendBroadcast ===] " + callRef);
+
+                        StringBuffer logsb = new StringBuffer();
+
+                        logsb.append("time: " + time + '\n')
+                                .append("function: sendBroadcast\n")
+                                .append("acton: " + intent.getAction() + '\n')
+                                .append("receiver Permission: " + receiverPermission + '\n')
+                                .append("callRef: " + callRef);
+
+                        Util.writeLog(packageParam.packageName, logsb.toString());
                     }
                 });
     }

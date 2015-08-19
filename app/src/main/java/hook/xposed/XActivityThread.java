@@ -1,20 +1,15 @@
 package hook.xposed;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import util.Logger;
 import util.Stack;
 import util.Util;
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 public class XActivityThread extends XHook {
 
     private static final String className = "android.app.ActivityThread";
-    private static List<String> logList = null;
     private static XActivityThread classLoadHook;
 
     public static XActivityThread getInstance() {
@@ -26,7 +21,6 @@ public class XActivityThread extends XHook {
 
     @Override
     void hook(final XC_LoadPackage.LoadPackageParam packageParam) {
-        logList = new ArrayList<String>();
         try {
             Class<?> receiverDataClass = Class.forName("android.app.ActivityThread$ReceiverData");
 
@@ -43,15 +37,12 @@ public class XActivityThread extends XHook {
                                 Logger.log("[=== ActivityThread$ReceiverData handleReceiver ===] Receiver Name : " + revName);
                                 Logger.log("[=== ActivityThread$ReceiverData handleReceiver ===] " + callRef);
 
-                                logList.add("time:" + time);
-                                logList.add("action:--handler data receiver--");
-                                logList.add("function:handleReceiver");
-                                logList.add("The Receiver Information:" + revName);
-                                for (String log : logList) {
-                                    XposedBridge.log(log);
-                                }
-                                Util.writeLog(packageParam.packageName, logList);
-                                logList.clear();
+                                StringBuffer logsb = new StringBuffer();
+                                logsb.append("time:" + time + '\n')
+                                        .append("function:handleReceiver\n")
+                                        .append("CallRef:" + callRef + '\n')
+                                        .append("The Receiver Information:" + revName + '\n');
+                                Util.writeLog(packageParam.packageName, logsb.toString());
                             }
                         });
             }

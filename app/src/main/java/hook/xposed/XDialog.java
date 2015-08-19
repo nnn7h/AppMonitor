@@ -3,11 +3,7 @@ package hook.xposed;
 import android.app.Dialog;
 import android.view.View;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import util.Logger;
@@ -16,7 +12,6 @@ import util.Util;
 
 public class XDialog extends XHook {
     private static final String className = Dialog.class.getName();
-    private static List<String> logList = null;
     private static XDialog xDialog;
 
     public static XDialog getInstance() {
@@ -28,8 +23,6 @@ public class XDialog extends XHook {
 
     @Override
     void hook(final XC_LoadPackage.LoadPackageParam packageParam) {
-        logList = new ArrayList<String>();
-
         XposedHelpers.findAndHookMethod(className, packageParam.classLoader,
                 "setContentView", View.class, new XC_MethodHook() {
                     @Override
@@ -40,15 +33,12 @@ public class XDialog extends XHook {
                         Logger.log("[--- DIALOG ---]");
                         Logger.log("[--- DIALOG ---]" + callRef);
 
-                        logList.add("time:" + time);
-                        logList.add("POP DIALOG");
-                        logList.add("StackTrace : " + callRef);
+                        StringBuffer logsb = new StringBuffer();
+                        logsb.append("time: " + time + '\n')
+                                .append("function: POP DIALOG\n")
+                                .append("StackTrace: " + callRef + '\n');
 
-                        for (String log : logList) {
-                            XposedBridge.log(log);
-                        }
-                        Util.writeLog(packageParam.packageName, logList);
-                        logList.clear();
+                        Util.writeLog(packageParam.packageName, logsb.toString());
                     }
                 });
     }

@@ -2,11 +2,7 @@ package hook.xposed;
 
 import android.telephony.SmsMessage;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import util.Logger;
@@ -15,7 +11,6 @@ import util.Util;
 
 public class XSmsMessage extends XHook {
     private static final String className = "android.telephony.SmsMessage";
-    private static List<String> logList = null;
     private static XSmsMessage xSmsMessage;
 
     public static XSmsMessage getInstance() {
@@ -27,7 +22,6 @@ public class XSmsMessage extends XHook {
 
     @Override
     void hook(final XC_LoadPackage.LoadPackageParam packageParam) {
-        logList = new ArrayList<String>();
         XposedHelpers.findAndHookMethod(className, packageParam.classLoader,
                 "createFromPdu", byte[].class, new XC_MethodHook() {
                     @Override
@@ -43,15 +37,14 @@ public class XSmsMessage extends XHook {
                         Logger.log("[### Read SMS ###] " + body);
                         Logger.log("[### Read SMS ###] " + callRef);
 
-                        logList.add("time:" + time);
-                        logList.add("action:--receive sms--");
-                        logList.add("adress:" + smsMessage.getDisplayOriginatingAddress());
-                        logList.add("body:" + smsMessage.getDisplayMessageBody());
-                        for (String log : logList) {
-                            XposedBridge.log(log);
-                        }
-                        Util.writeLog(packageParam.packageName, logList);
-                        logList.clear();
+                        StringBuffer logsb = new StringBuffer();
+                        logsb.append("time: " + time + '\n')
+                                .append("action:receive sms\n")
+                                .append("adress:" + addr + '\n')
+                                .append("body:" + body + '\n')
+                                .append("callRef: " + callRef + '\n');
+
+                        Util.writeLog(packageParam.packageName, logsb.toString());
                     }
                 });
     }

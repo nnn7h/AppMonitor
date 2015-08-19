@@ -1,10 +1,6 @@
 package hook.xposed;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import util.Logger;
@@ -14,7 +10,6 @@ import util.Util;
 public class XWebView extends XHook {
 
     private static final String className = "android.webkit.WebView";
-    private static List<String> logList = null;
     private static XWebView xWebView;
 
     public static XWebView getInstance() {
@@ -26,8 +21,6 @@ public class XWebView extends XHook {
 
     @Override
     void hook(final XC_LoadPackage.LoadPackageParam packageParam) {
-        logList = new ArrayList<String>();
-
 
         XposedHelpers.findAndHookMethod(className, packageParam.classLoader,
                 "loadUrl", String.class, new XC_MethodHook() {
@@ -41,15 +34,13 @@ public class XWebView extends XHook {
                         Logger.log("[--- Webview loadUrl ---] " + url);
                         Logger.log("[--- Webview loadUrl ---] " + callRef);
 
-                        logList.add("time:" + time);
-                        logList.add("Webview -> loadUrl");
-                        logList.add("url : " + url);
+                        StringBuffer logsb = new StringBuffer();
+                        logsb.append("time: " + time + '\n')
+                                .append("Webview.loadUrl\n")
+                                .append("url : " + url + '\n')
+                                .append("callRef: " + callRef + '\n');
 
-                        for (String log : logList) {
-                            XposedBridge.log(log);
-                        }
-                        Util.writeLog(packageParam.packageName, logList);
-                        logList.clear();
+                        Util.writeLog(packageParam.packageName, logsb.toString());
                     }
                 });
 

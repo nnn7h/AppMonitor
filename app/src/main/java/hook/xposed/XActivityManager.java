@@ -2,11 +2,7 @@ package hook.xposed;
 
 import android.app.ActivityManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import util.Logger;
@@ -16,7 +12,6 @@ import util.Util;
 public class XActivityManager extends XHook {
 
     private static final String className = ActivityManager.class.getName();
-    private static List<String> logList = null;
     private static XActivityManager classLoadHook;
 
     public static XActivityManager getInstance() {
@@ -28,7 +23,6 @@ public class XActivityManager extends XHook {
 
     @Override
     void hook(final XC_LoadPackage.LoadPackageParam packageParam) {
-        logList = new ArrayList<String>();
 
         XposedHelpers.findAndHookMethod(className, packageParam.classLoader,
                 "killBackgroundProcesses", String.class, new XC_MethodHook() {
@@ -42,15 +36,12 @@ public class XActivityManager extends XHook {
                         Logger.log("[### ActivityManager killBackgroundProcesses ###] " + processes);
                         Logger.log("[### ActivityManager killBackgroundProcesses ###] " + callRef);
 
-                        logList.add("time:" + time);
-                        logList.add("action:--kill background process--");
-                        logList.add("function:killBackgroundProcesses");
-                        logList.add("killed processes:" + processes);
-                        for (String log : logList) {
-                            XposedBridge.log(log);
-                        }
-                        Util.writeLog(packageParam.packageName, logList);
-                        logList.clear();
+                        StringBuffer logsb = new StringBuffer();
+                        logsb.append("time:" + time + '\n')
+                                .append("function:killBackgroundProcesses")
+                                .append("CallRef:" + callRef)
+                                .append("killed processes:" + processes);
+                        Util.writeLog(packageParam.packageName, logsb.toString());
                     }
                 });
 
@@ -66,15 +57,12 @@ public class XActivityManager extends XHook {
                         Logger.log("[### ActivityManager -> forceStopPackage ###] " + pkgName);
                         Logger.log("[### ActivityManager -> forceStopPackage ###] " + callRef);
 
-                        logList.add("time:" + time);
-                        logList.add("action:--force stop package--");
-                        logList.add("function:forceStopPackage");
-                        logList.add("stoped package:" + pkgName);
-                        for (String log : logList) {
-                            XposedBridge.log(log);
-                        }
-                        Util.writeLog(packageParam.packageName, logList);
-                        logList.clear();
+                        StringBuffer logsb = new StringBuffer();
+                        logsb.append("time:" + time + '\n')
+                                .append("function:forceStopPackage\n")
+                                .append("CallRef:" + callRef + '\n')
+                                .append("stoped package:" + pkgName + '\n');
+                        Util.writeLog(packageParam.packageName, logsb.toString());
                     }
                 });
     }

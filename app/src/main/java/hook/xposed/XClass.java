@@ -1,19 +1,13 @@
 package hook.xposed;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import util.Logger;
 import util.Stack;
-import util.Util;
 
 public class XClass extends XHook {
     private static final String className = "java.lang.Class";
-    private static List<String> logList = null;
     private static XClass classLoadHook;
 
     public static XClass getInstance() {
@@ -25,7 +19,6 @@ public class XClass extends XHook {
 
     @Override
     void hook(final XC_LoadPackage.LoadPackageParam packageParam) {
-        logList = new ArrayList<String>();
         XposedHelpers.findAndHookMethod(className, packageParam.classLoader, "forName",
                 String.class, new XC_MethodHook() {
                     @Override
@@ -36,16 +29,6 @@ public class XClass extends XHook {
                         String callRef = Stack.getCallRef();
                         Logger.log("[--- Class forName ---] " + callRef);
 
-//                        String time = Util.getSystemTime();
-//                        logList.add("time:" + time);
-//                        logList.add("action:--class for name--");
-//                        logList.add("function:Class.forName");
-//                        logList.add("target:" + name);
-//                        for (String log : logList) {
-//                            XposedBridge.log(log);
-//                        }
-//                        Util.writeLog(packageParam.packageName, logList);
-//                        logList.clear();
                     }
                 });
 
@@ -65,16 +48,6 @@ public class XClass extends XHook {
                         String callRef = Stack.getCallRef();
                         Logger.log("[--- Class getMethod ---] " + callRef);
 
-                        String time = Util.getSystemTime();
-                        logList.add("time:" + time);
-                        logList.add("action:--get method--");
-                        logList.add("function:getMethod");
-                        logList.add("method:" + name);
-                        for (String log : logList) {
-                            XposedBridge.log(log);
-                        }
-                        Util.writeLog(packageParam.packageName, logList);
-                        logList.clear();
                     }
                 });
 
