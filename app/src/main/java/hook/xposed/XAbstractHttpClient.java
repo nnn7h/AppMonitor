@@ -66,7 +66,6 @@ public class XAbstractHttpClient extends XHook {
                         logsb.append("callRef:" + callRef + '\n');
                         Util.writeLog(packageParam.packageName, logsb.toString());
 
-                        Logger.log("[=== AbstractHttpClient execute ===] host : " + host);
                         Logger.logCallRef("[=== AbstractHttpClient execute ===] ");
                     }
                 });
@@ -77,10 +76,10 @@ public class XAbstractHttpClient extends XHook {
         String host = httpHost.toURI().toString();
         String url = httpGet.getURI().toString();
         StringBuffer logsb = new StringBuffer();
+
         logsb.append("HTTP METHOD:" + httpGet.getMethod() + '\n')
                 .append("HOST:" + host + '\n')
                 .append("URL:" + url + '\n');
-
 
         Logger.log("[=== HttpGet ===] host : " + host);
         Logger.log("[=== HttpGet ===] url  : " + url);
@@ -163,6 +162,7 @@ public class XAbstractHttpClient extends XHook {
         StringBuffer logsb = new StringBuffer();
         if (respone != null) {
             logsb.append("result code:" + respone.getStatusLine().getStatusCode() + '\n');
+            Logger.log("[=== AbstractHttpClient execute ===] (code) " + respone.getStatusLine().getStatusCode());
             Header[] header = respone.getAllHeaders();
             if (header != null) {
                 for (int i = 0; i < header.length; i++) {
@@ -179,16 +179,17 @@ public class XAbstractHttpClient extends XHook {
                 String line = reader.readLine();
                 while (line != null){
                     sb.append(line + '\n');
+                    line = reader.readLine();
                 }
                 result = sb.toString();
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                Logger.log(e.getMessage());
             }
-            logsb.append("result:\n" + result + '\n');
-
+            logsb.append("result:\n" + result);
             Logger.log("[=== AbstractHttpClient execute ===] result : " + result);
         } else {
             logsb.append("result:null\n");
+            Logger.log("[=== AbstractHttpClient execute ===] result : null");
         }
         return logsb.toString();
     }

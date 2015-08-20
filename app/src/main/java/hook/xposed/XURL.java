@@ -40,7 +40,7 @@ public class XURL extends XHook {
                         }
 
                         HttpURLConnection conn = (HttpURLConnection) param.getResult();
-                        String result = handleReslt(conn);
+//                        String result = handleReslt(conn);
                         String callRef = Stack.getCallRef();
                         boolean flag = Logger.isFeeUrl(url);
 
@@ -57,9 +57,9 @@ public class XURL extends XHook {
                         StringBuffer logsb = new StringBuffer();
                         logsb.append("time:" + time)
                                 .append("function: openConnection\n")
-                                .append("url:" + url)
+                                .append("url:" + url + '\n')
                                 .append("Is fee url: " + flag + '\n')
-                                .append("result: " + result + '\n')
+//                                .append("result: " + result + '\n')
                                 .append("callRef: " + callRef + '\n');
 
                         Util.writeLog(packageParam.packageName, logsb.toString());
@@ -80,6 +80,7 @@ public class XURL extends XHook {
             String line = reader.readLine();
             while (line != null){
                 sb.append(line + '\n');
+                line = reader.readLine();
             }
             result = sb.toString();
         } catch (IOException e) {
