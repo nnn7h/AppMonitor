@@ -65,7 +65,7 @@ public class XAbstractHttpClient extends XHook {
     }
 
     private String handleResult(BasicHttpResponse respone){
-        int len = 100;
+        int len = 30;
         int off = 0;
         int count = 0;
         byte[] resultbyte = null;

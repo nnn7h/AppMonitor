@@ -35,20 +35,24 @@ public class XURL extends XHook {
                         HttpURLConnection connection = (HttpURLConnection) param.getResult();
                         String jsonUrl = handleUrl(url);
                         Util.writeLog(packageParam.packageName, jsonUrl);
-                        String jsonResult = handleResult(connection);
-                        if (!jsonResult.equals("")){
-                            Util.writeLog(packageParam.packageName, jsonUrl);
-                        }
+//                        String jsonResult = handleResult(connection);
+//                        if (!jsonResult.equals("")){
+//                            Util.writeLog(packageParam.packageName, jsonUrl);
+//                        }
                     }
                 });
     }
 
     private String handleUrl(String url){
         String time = Util.getSystemTime();
+        String action = "openConnection";
+        if (url.contains(".apk")){
+            action = "download";
+        }
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put("time", time);
-            jsonObj.put("action", "openConnection");
+            jsonObj.put("action", action);
             JSONObject content = new JSONObject();
             content.put("url", url);
             jsonObj.put("content", content);
@@ -60,7 +64,7 @@ public class XURL extends XHook {
     }
 
     private String handleResult(HttpURLConnection connection){
-        int len = 100;
+        int len = 25;
         int off = 0;
         int count = 0;
         byte[] resultbyte = null;
